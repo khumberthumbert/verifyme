@@ -1,0 +1,7 @@
+package SafeAccess.verifyme.repository;
+
+import SafeAccess.verifyme.domain.entity.RoleHierarchy;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface RoleHierarchyRepository extends JpaRepository<RoleHierarchy, Long> {
+}
