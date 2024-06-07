@@ -6,6 +6,7 @@ import SafeAccess.verifyme.domain.entity.UserRole;
 import SafeAccess.verifyme.repository.RoleRepository;
 import SafeAccess.verifyme.repository.UserRepository;
 import SafeAccess.verifyme.repository.UserRoleRepository;
+import SafeAccess.verifyme.service.RoleService;
 import SafeAccess.verifyme.service.UserService;
 import SafeAccess.verifyme.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Optional;
 
@@ -22,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 
+@ExtendWith(SpringExtension.class)
 public class UserServiceTests {
 
     @Mock
@@ -34,16 +38,19 @@ public class UserServiceTests {
     private UserRoleRepository userRoleRepository;
 
     @Mock
+    private RoleService roleService;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserServiceImpl userService;  // UserServiceImpl을 직접 주입
+    private UserServiceImpl userService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         passwordEncoder = new BCryptPasswordEncoder();
-        userService = new UserServiceImpl(userRepository, userRoleRepository, roleRepository, passwordEncoder);  // 생성자 주입
+        userService = new UserServiceImpl(userRepository, userRoleRepository, roleService, passwordEncoder);
     }
 
     @Test
@@ -56,7 +63,7 @@ public class UserServiceTests {
         Role role = new Role();
         role.setName("ROLE_USER");
 
-        when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(role));
+        when(roleService.findByName("ROLE_USER")).thenReturn(Optional.of(role));
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(userRoleRepository.save(any(UserRole.class))).thenReturn(new UserRole());
 
