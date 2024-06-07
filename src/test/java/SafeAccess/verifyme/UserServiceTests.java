@@ -6,6 +6,8 @@ import SafeAccess.verifyme.domain.entity.UserRole;
 import SafeAccess.verifyme.repository.RoleRepository;
 import SafeAccess.verifyme.repository.UserRepository;
 import SafeAccess.verifyme.repository.UserRoleRepository;
+import SafeAccess.verifyme.service.UserService;
+import SafeAccess.verifyme.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,14 +37,13 @@ public class UserServiceTests {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserService userService;
-
+    private UserServiceImpl userService;  // UserServiceImpl을 직접 주입
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         passwordEncoder = new BCryptPasswordEncoder();
-        userService = new UserService(userRepository, roleRepository, userRoleRepository, passwordEncoder);
+        userService = new UserServiceImpl(userRepository, userRoleRepository, roleRepository, passwordEncoder);  // 생성자 주입
     }
 
     @Test
@@ -63,7 +64,7 @@ public class UserServiceTests {
 
         assertNotNull(registeredUser);
         assertEquals("testuser", registeredUser.getUsername());
-        verify(userRepository, times(1)). save(user);
+        verify(userRepository, times(1)).save(user);
         verify(userRoleRepository, times(1)).save(any(UserRole.class));
     }
 

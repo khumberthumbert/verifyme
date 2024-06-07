@@ -6,8 +6,10 @@ import SafeAccess.verifyme.domain.entity.UserRole;
 import SafeAccess.verifyme.repository.RoleRepository;
 import SafeAccess.verifyme.repository.UserRepository;
 import SafeAccess.verifyme.repository.UserRoleRepository;
+import SafeAccess.verifyme.service.RoleService;
 import SafeAccess.verifyme.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +22,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
+    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -29,7 +31,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
 
-        Role role = roleRepository.findByName(roleName)
+        Role role = roleService.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         UserRole userRole = new UserRole();
         userRole.setUser(user);
